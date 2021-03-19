@@ -2,8 +2,8 @@ use Mix.Config
 
 # Configure your database
 config :projetinho, Projetinho.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "teste",
+  password: "teste",
   database: "projetinho_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,

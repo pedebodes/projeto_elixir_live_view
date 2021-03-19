@@ -1,14 +1,23 @@
 defmodule ProjetinhoWeb.PageLive do
   use ProjetinhoWeb, :live_view
 
-  @colors ["pink", "red", "purple", "green", "blue"]
+  @colors_pt_en [
+    {"rosa", "pink"},
+    {"vermelho", "red"},
+    {"roxo", "purple"},
+    {"verde", "green"},
+    {"branco", "white"},
+    {"azul", "blue"}
+  ]
+
+  @interval 3000
 
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      :timer.send_interval(1000, :tick)
+      :timer.send_interval(@interval, :tick)
     end
 
-    {:ok, assign(socket, x: 0, y: 0, color: "purple")}
+    {:ok, assign(socket, x: 0, y: 0, color: choose_color(), cores: @colors_pt_en)}
   end
 
   def render(assigns) do
@@ -19,13 +28,25 @@ defmodule ProjetinhoWeb.PageLive do
         <rect x="<%= @x * 25 %>" y="<%= @y * 25 %>"
          width="25" height="25" style="fill:<%= @color %>;" />
       </svg>
-      <pre><%= inspect(@color) %></pre>
+      <pre><%= inspect(get_color_name(@color)) %></pre>
     </section>
     """
   end
 
   def handle_info(:tick, socket) do
-    {:noreply, assign(socket, color: Enum.random(@colors))}
+    {:noreply, assign(socket, color: choose_color())}
+  end
+
+  defp choose_color() do
+    @colors_pt_en
+    |> Enum.map(fn {_, en} -> en end)
+    |> Enum.random()
+  end
+
+  defp get_color_name(color) do
+    @colors_pt_en
+    |> Enum.find(fn {_pt, en} -> color == en end)
+    |> elem(0)
   end
 
   def handle_event("keydown", %{"key" => "ArrowRight"}, socket) do
@@ -47,8 +68,4 @@ defmodule ProjetinhoWeb.PageLive do
   def handle_event("keydown", _key, socket) do
     {:noreply, socket}
   end
-
-
 end
-
-
